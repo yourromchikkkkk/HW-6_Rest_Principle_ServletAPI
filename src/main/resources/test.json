@@ -1,0 +1,10 @@
+{
+  "id": 1,
+  "name": "Nadia",
+  "surname": "Strogysh",
+  "age": 49,
+  "details": {
+    "city": "Lviv",
+    "work": "accounter"
+  }
+}
