@@ -48,15 +48,11 @@ public class UserController {
 
     @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUser(@RequestBody User user, @PathVariable("id") int id) {
-        Optional optionalUser = users.stream().filter(temp -> temp.getId() == id).findFirst();
-        if (optionalUser.isPresent()) {
-            for (User temp : users) {
-                if(temp.getId() == id) {
-                    temp.setAge(user.getAge());
-                    temp.setName(user.getName());
-                    temp.setSurname(user.getSurname());
-                }
-            }
+        if (users.stream().anyMatch(temp -> temp.getId() == id)) {
+            User userToUpdate = users.stream().filter(temp -> temp.getId() == id).findFirst().get();
+            userToUpdate.setAge(user.getAge());
+            userToUpdate.setName(user.getName());
+            userToUpdate.setSurname(user.getSurname());
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -65,9 +61,8 @@ public class UserController {
 
     @DeleteMapping("/users/{id}")
     public ResponseEntity<User> deleteUser(@PathVariable("id") int id) {
-        Optional optionalUser = users.stream().filter(temp -> temp.getId() == id).findFirst();
-        if(optionalUser.isPresent()) {
-            users.remove(optionalUser.get());
+        if(users.stream().anyMatch(temp -> temp.getId() == id)) {
+            users.remove(users.stream().filter(temp -> temp.getId() == id).findFirst().get());
             return ResponseEntity.accepted().build();
         } else {
             return ResponseEntity.notFound().build();
