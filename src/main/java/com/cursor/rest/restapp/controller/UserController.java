@@ -36,9 +36,8 @@ public class UserController {
 
     @PostMapping("/users")
     public ResponseEntity<User> addUser(@RequestBody User user) {
-        Optional optionalUserName = users.stream().filter(temp -> Objects.equals(temp.getName(), user.getName())).findFirst();
-        Optional optionalUserId = users.stream().filter(temp -> temp.getId() == user.getId()).findFirst();
-        if (!optionalUserName.isPresent() && !optionalUserId.isPresent()) {
+        if (!users.stream()
+                .anyMatch(temp -> Objects.equals(temp.getName(), user.getName()) && temp.getId() == user.getId())) {
             users.add(user);
             return ResponseEntity.created(URI.create("/users")).build();
         } else {
