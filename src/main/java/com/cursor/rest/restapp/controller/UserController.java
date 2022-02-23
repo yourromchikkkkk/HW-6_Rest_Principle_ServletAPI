@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Predicate;
 
 @RestController
 public class UserController {
@@ -34,10 +35,16 @@ public class UserController {
         }
     }
 
+    private boolean isCorrectUser(User user) {
+        Predicate<User> condition = i -> (Objects.equals(i.getName(), user.getName()));
+        Optional<User> optionalUserName = users.stream().filter(condition).findFirst();
+        Optional<User> optionalUserId = users.stream().filter(temp -> temp.getId() == user.getId()).findFirst();
+        return optionalUserName.isEmpty() && optionalUserId.isEmpty();
+    }
+
     @PostMapping("/users")
     public ResponseEntity<User> addUser(@RequestBody User user) {
-        if (!users.stream()
-                .anyMatch(temp -> temp.getId() == user.getId() || (Objects.equals(temp.getName(), user.getName()) && Objects.equals(temp.getSurname(), user.getSurname())))) {
+        if (isCorrectUser(user)) {
             users.add(user);
             return ResponseEntity.created(URI.create("/users")).build();
         } else {
